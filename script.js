@@ -3,7 +3,8 @@ const mainElement = document.querySelector("main");
 async function getFilms() {
   const getData = await fetch("https://ghibliapi.vercel.app/films");
   const data = await getData.json();
-  data.sort((a, b) => (a.title > b.title ? 1 : -1));
+  setSort(data);
+
   data.forEach((element) => {
     createCard(element);
   });
@@ -11,9 +12,27 @@ async function getFilms() {
 
 getFilms();
 
-document.getElementById('sortorder').addEventListener('change', ()=>{
-    console.log(document.getElementById("sortorder").value);
-})
+document.getElementById("sortorder").addEventListener("change", () => {
+  mainElement.innerHTML = "";
+  getFilms();
+});
+
+const setSort = (array) => {
+  const sortOrder = document.getElementById("sortorder").value;
+  switch (sortOrder) {
+    case "title":
+      array.sort((a, b) => (a.title > b.title ? 1 : -1));
+      break;
+    case "release_date":
+      array.sort((a, b) => (a.release_date > b.release_date ? 1 : -1));
+      break;
+    case "rt_score":
+      array.sort((a, b) =>
+        parseInt(a.rt_score) > parseInt(b.rt_score) ? -1 : 1
+      );
+      break;
+  }
+};
 
 const createCard = (data) => {
   const card = document.createElement("article");
@@ -41,8 +60,8 @@ const createCard = (data) => {
 
   const filmImg = document.createElement("img");
   filmImg.setAttribute("src", data.image);
-  filmImg.style.width = '20rem'
-  filmImg.style.height = '17rem'
+  filmImg.style.width = "20rem";
+  filmImg.style.height = "17rem";
 
   card.appendChild(movieTitle);
   card.appendChild(director);
